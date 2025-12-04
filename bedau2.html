@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Thời Khóa Biểu Hello Kitty</title>
+    <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --hk-pink: #ffb7c5; /* Hồng phấn Hello Kitty */
+            --hk-dark-pink: #ff69b4; /* Hồng đậm */
+            --hk-white: #fff0f5; /* Trắng phớt hồng */
+            --text-color: #5a3a4a; /* Màu chữ nâu tím dễ thương */
+            --bg-dots: #ffcdd2;
+        }
+
+        body {
+            font-family: 'Itim', cursive; /* Font chữ cute */
+            background-color: #ffe6f2;
+            /* Tạo hiệu ứng chấm bi nền */
+            background-image: radial-gradient(var(--bg-dots) 15%, transparent 16%), radial-gradient(var(--bg-dots) 15%, transparent 16%);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            color: var(--text-color);
+            cursor: url('https://cur.cursors-4u.net/others/oth-6/oth608.cur'), auto; /* Con trỏ chuột cute */
+            overflow-x: hidden;
+            /* Ngăn kéo trang trên mobile để trải nghiệm app-like hơn */
+            overscroll-behavior: none; 
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.95); /* Nền hơi trong suốt */
+            padding: 20px;
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(255, 105, 180, 0.3), 0 0 15px rgba(255, 183, 197, 0.5);
+            border: 5px solid var(--hk-pink);
+            max-width: 900px;
+            width: 100%;
+            position: relative;
+            backdrop-filter: blur(5px);
+            animation: popIn 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--hk-dark-pink);
+            font-size: 2.8em;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 0px #fff;
+            margin-top: 10px;
+            /* Hiệu ứng chữ 7 màu nhẹ */
+            background: linear-gradient(45deg, #ff69b4, #ffb7c5, #ff69b4);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 0px rgba(255,255,255,0.5); /* Giữ bóng mờ */
+            animation: gradientText 3s linear infinite;
+        }
+
+        @keyframes gradientText {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .stickers {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 15px;
+            letter-spacing: 15px;
+            cursor: default;
+        }
+
+        .stickers span {
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+
+        .stickers span:hover {
+            transform: scale(1.5) rotate(20deg);
+        }
+
+        /* Responsive Table Wrapper */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 15px;
+            /* Smooth scroll trên iOS */
+            -webkit-overflow-scrolling: touch; 
+            padding-bottom: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 4px;
+            margin-top: 10px;
+            min-width: 650px; /* Đảm bảo bảng không bị co quá nhỏ */
+        }
+
+        th {
+            background-color: var(--hk-pink);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: normal;
+            font-size: 1.2em;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            white-space: nowrap;
+        }
+
+        td {
+            background-color: var(--hk-white);
+            border: 2px solid #ffebf0;
+            padding: 10px;
+            text-align: center;
+            border-radius: 10px;
+            height: 50px;
+            vertical-align: middle;
+            transition: all 0.3s;
+            font-size: 1.05em;
+            position: relative;
+            z-index: 1;
+        }
+
+        td:hover, td:active {
+            background-color: #fff;
+            transform: scale(1.05);
+            border-color: var(--hk-dark-pink);
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255,105,180,0.3);
+            z-index: 10;
+        }
+
+        .session-title {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            font-weight: bold;
+            background-color: var(--hk-dark-pink);
+            color: white;
+            width: 40px;
+            font-size: 1.1em;
+            border: 2px solid white;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .subject {
+            font-weight: bold;
+            color: var(--hk-dark-pink);
+            background-color: #fff0f6;
+        }
+
+        .note {
+            display: block;
+            font-size: 0.75em;
+            color: #888;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        /* Trang trí mặc định */
+        .bow, .kitty-face {
+            opacity: 0;
+            position: absolute;
+            transition: opacity 0.3s;
+        }
+        
+        #default-bow { top: -15px; right: -15px; font-size: 4em; transform: rotate(15deg); z-index: 10; }
+        #default-face { top: 10px; left: 20px; font-size: 3em; transform: rotate(-10deg); z-index: 10; }
+
+        /* Trang trí tùy chỉnh (ảnh dán vào) */
+        .custom-sticker {
+            position: absolute;
+            z-index: 20;
+            max-width: 140px;
+            max-height: 140px;
+            object-fit: contain;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.15));
+            transition: transform 0.3s;
+            display: block;
+        }
+        
+        .custom-sticker:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .sticker-left {
+            top: -20px;
+            left: -10px;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .sticker-right {
+            top: -30px;
+            right: -20px;
+            animation: float 5s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(-5deg); }
+            50% { transform: translateY(-15px) rotate(0deg); }
+            100% { transform: translateY(0px) rotate(-5deg); }
+        }
+
+        /* Khu vực nhập link ảnh */
+        .controls {
+            margin-top: 30px;
+            text-align: center;
+            border-top: 2px dashed var(--hk-pink);
+            padding-top: 20px;
+            position: relative;
+        }
+
+        .input-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .cute-input {
+            border: 2px solid var(--hk-pink);
+            border-radius: 20px;
+            padding: 10px 15px;
+            width: 100%; /* Full width trên mobile */
+            max-width: 300px; /* Giới hạn width trên desktop */
+            outline: none;
+            color: var(--text-color);
+            font-family: 'Itim', cursive;
+            background: #fff0f5;
+            transition: all 0.3s;
+        }
+
+        .cute-input:focus {
+            border-color: var(--hk-dark-pink);
+            background: white;
+            box-shadow: 0 0 8px var(--hk-pink);
+        }
+
+        /* Sparkle effect styles */
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ff69b4"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg>');
+            background-size: cover;
+            width: 15px;
+            height: 15px;
+            animation: sparkle-anim 1s linear forwards;
+            z-index: 100;
+        }
+        
+        @keyframes sparkle-anim {
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            100% { transform: scale(1.5) rotate(180deg) translateY(20px); opacity: 0; }
+        }
+
+        /* Responsive tối ưu cho điện thoại */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8em; margin-top: 20px; } /* Thêm margin top để tránh sticker */
+            .container { padding: 15px 10px; margin: 0; border-radius: 15px; }
+            td, th { padding: 8px 5px; font-size: 0.95em; }
+            
+            /* Sticker nhỏ lại và gọn hơn trên mobile */
+            .custom-sticker { max-width: 80px; max-height: 80px; }
+            .sticker-left { top: -15px; left: -5px; }
+            .sticker-right { top: -20px; right: -5px; }
+            
+            .input-group { flex-direction: column; align-items: center; width: 100%; }
+            .cute-input { max-width: 100%; box-sizing: border-box; }
+            
+            /* Ẩn sticker text emoji nếu màn hình quá nhỏ */
+            .stickers { font-size: 1.5em; letter-spacing: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="default-bow" class="bow">🎀</div>
+    <div id="default-face" class="kitty-face">🐱</div>
+    
+    <img id="img-left" class="custom-sticker sticker-left" 
+         src="https://sf-static.upanhlaylink.com/img/image_202512046c84562868689e59453a0cb4a1ee8b4d.jpg" 
+         alt="Hello Kitty">
+         
+    <img id="img-right" class="custom-sticker sticker-right" 
+         src="https://sf-static.upanhlaylink.com/img/image_20251204933dc9135c87a090a002478929debcd4.jpg" 
+         alt="Nơ Đỏ">
+    
+    <h1>Thời Khóa Biểu 🌸</h1>
+    <div class="stickers">
+        <span>🍰</span>
+        <span>🍓</span>
+        <span>🎵</span>
+        <span>🧸</span>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Buổi</th>
+                    <th>Tiết</th>
+                    <th>Thứ 2</th>
+                    <th>Thứ 3</th>
+                    <th>Thứ 4</th>
+                    <th>Thứ 5</th>
+                    <th>Thứ 6</th>
+                    <th>Thứ 7</th>
+                    <th>CN</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- SÁNG -->
+                <tr>
+                    <td rowspan="5" class="session-title">SÁNG ☀️</td>
+                    <td>1</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td rowspan="3" class="subject">Tâm lí 🧠<span class="note">(Tiết 1-3)</span></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td rowspan="2" class="subject">Âm nhạc 🎵</td>
+                    <td rowspan="2" class="subject">Triết học 📚</td>
+                    <td rowspan="2" class="subject">Âm nhạc 🎵</td>
+                    <td rowspan="2" class="subject">Tâm lí 🧠</td>
+                    <td rowspan="2" class="subject">Anh văn 🇬🇧</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+                <!-- CHIỀU -->
+                <tr>
+                    <td rowspan="4" class="session-title" style="background-color: #ff9ec3;">CHIỀU 🌙</td>
+                    <td>6</td>
+                    <td></td>
+                    <td></td>
+                    <td rowspan="3" class="subject">Triết học 📚<span class="note">(Tiết 6-8)</span></td>
+                    <td rowspan="3" class="subject">Anh văn 🇬🇧<span class="note">(Tiết 6-8)</span></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="controls">
+        <p style="margin: 0 0 15px 0; color: var(--hk-dark-pink); font-size: 1.1em;">✨ Thay đổi link hình ở đây nếu bạn thích ✨</p>
+        <div class="input-group">
+            <input type="text" class="cute-input" 
+                   value="https://upload.wikimedia.org/wikipedia/en/0/05/Hello_kitty_character_portrait.png" 
+                   placeholder="🔗 Link hình góc trái (Hello Kitty)" 
+                   oninput="updateImage('left', this.value)">
+                   
+            <input type="text" class="cute-input" 
+                   value="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Red_bow_tie.svg/640px-Red_bow_tie.svg.png" 
+                   placeholder="🔗 Link hình góc phải (Cái Nơ)" 
+                   oninput="updateImage('right', this.value)">
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateImage(side, url) {
+        const img = document.getElementById(side === 'left' ? 'img-left' : 'img-right');
+        const defaultIcon = document.getElementById(side === 'left' ? 'default-face' : 'default-bow');
+        
+        if (url && url.trim() !== "") {
+            img.src = url;
+            img.style.display = 'block';
+            if(defaultIcon) defaultIcon.style.opacity = '0';
+            
+            img.onerror = function() {
+                img.style.display = 'none';
+                if(defaultIcon) defaultIcon.style.opacity = '1';
+            }
+        } else {
+            img.style.display = 'none';
+            if(defaultIcon) defaultIcon.style.opacity = '1';
+        }
+    }
+
+    // --- XỬ LÝ HIỆU ỨNG TRÊN PC VÀ MOBILE ---
+
+    // 1. Di chuyển chuột (PC)
+    let throttleTimer;
+    document.addEventListener('mousemove', function(e) {
+        if(!throttleTimer) {
+            throttleTimer = setTimeout(function() {
+                if(Math.random() > 0.5) createSparkle(e.pageX, e.pageY);
+                throttleTimer = null;
+            }, 50); // Giới hạn tần suất tạo hạt để không lag
+        }
+    });
+
+    // 2. Chạm cảm ứng (Mobile)
+    document.addEventListener('touchmove', function(e) {
+        // Không preventDefault để vẫn cuộn trang được
+        const touch = e.touches[0];
+        if(Math.random() > 0.7) { // Mobile cần ít hạt hơn chút để mượt
+            createSparkle(touch.pageX, touch.pageY);
+        }
+    }, {passive: true});
+
+    // 3. Click hoặc Tap (Burst effect)
+    document.addEventListener('click', function(e) {
+        burstSparkles(e.pageX, e.pageY);
+    });
+    
+    document.addEventListener('touchstart', function(e) {
+        const touch = e.touches[0];
+        burstSparkles(touch.pageX, touch.pageY);
+    }, {passive: true});
+
+    function burstSparkles(x, y) {
+        for(let i=0; i<5; i++) {
+            setTimeout(() => {
+                const offsetX = (Math.random() - 0.5) * 50;
+                const offsetY = (Math.random() - 0.5) * 50;
+                createSparkle(x + offsetX, y + offsetY);
+            }, i * 50);
+        }
+    }
+
+    function createSparkle(x, y) {
+        const sparkle = document.createElement('div');
+        sparkle.classList.add('sparkle');
+        
+        const isPink = Math.random() > 0.5;
+        const color = isPink ? '%23ff69b4' : '%23ffd700';
+        sparkle.style.backgroundImage = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg>')`;
+
+        document.body.appendChild(sparkle);
+
+        const offsetX = (Math.random() - 0.5) * 20;
+        const offsetY = (Math.random() - 0.5) * 20;
+        
+        sparkle.style.left = (x + offsetX) + 'px';
+        sparkle.style.top = (y + offsetY) + 'px';
+
+        setTimeout(() => {
+            sparkle.remove();
+        }, 1000);
+    }
+</script>
+
+</body>
+</html>
