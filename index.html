@@ -31,7 +31,6 @@
             color: var(--text-color);
             cursor: url('https://cur.cursors-4u.net/others/oth-6/oth608.cur'), auto; /* Con trỏ chuột cute */
             overflow-x: hidden;
-            /* Ngăn kéo trang trên mobile để trải nghiệm app-like hơn */
             overscroll-behavior: none; 
         }
 
@@ -96,7 +95,6 @@
         .table-wrapper {
             overflow-x: auto;
             border-radius: 15px;
-            /* Smooth scroll trên iOS */
             -webkit-overflow-scrolling: touch; 
             padding-bottom: 5px;
         }
@@ -106,7 +104,7 @@
             border-collapse: separate;
             border-spacing: 4px;
             margin-top: 10px;
-            min-width: 650px; /* Đảm bảo bảng không bị co quá nhỏ */
+            min-width: 650px;
         }
 
         th {
@@ -139,9 +137,27 @@
             background-color: #fff;
             transform: scale(1.05);
             border-color: var(--hk-dark-pink);
-            cursor: pointer;
             box-shadow: 0 5px 15px rgba(255,105,180,0.3);
             z-index: 10;
+        }
+
+        /* CSS cho ô có thể chỉnh sửa */
+        td[contenteditable="true"] {
+            cursor: text;
+        }
+        
+        td[contenteditable="true"]:focus {
+            outline: 2px dashed var(--hk-dark-pink);
+            background-color: white;
+            box-shadow: 0 0 10px var(--hk-pink);
+        }
+        
+        /* Khi ô trống (hiện placeholder bằng CSS trick nếu cần, hoặc để trống) */
+        td[contenteditable="true"]:empty::before {
+            content: "Nhập...";
+            color: #e0c0c8;
+            font-size: 0.8em;
+            font-style: italic;
         }
 
         .session-title {
@@ -156,6 +172,7 @@
             box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
         }
 
+        /* Class .subject được dùng để in đậm và đổi màu các ô có nội dung */
         .subject {
             font-weight: bold;
             color: var(--hk-dark-pink);
@@ -168,6 +185,7 @@
             color: #888;
             margin-top: 4px;
             font-style: italic;
+            pointer-events: none; /* Tránh click nhầm vào note khi edit */
         }
 
         /* Trang trí mặc định */
@@ -222,6 +240,17 @@
             padding-top: 20px;
             position: relative;
         }
+        
+        .edit-hint {
+            text-align: center;
+            color: var(--hk-dark-pink);
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            background: rgba(255, 255, 255, 0.8);
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+        }
 
         .input-group {
             display: flex;
@@ -234,8 +263,8 @@
             border: 2px solid var(--hk-pink);
             border-radius: 20px;
             padding: 10px 15px;
-            width: 100%; /* Full width trên mobile */
-            max-width: 300px; /* Giới hạn width trên desktop */
+            width: 100%;
+            max-width: 300px;
             outline: none;
             color: var(--text-color);
             font-family: 'Itim', cursive;
@@ -266,21 +295,15 @@
             100% { transform: scale(1.5) rotate(180deg) translateY(20px); opacity: 0; }
         }
 
-        /* Responsive tối ưu cho điện thoại */
         @media (max-width: 600px) {
-            h1 { font-size: 1.8em; margin-top: 20px; } /* Thêm margin top để tránh sticker */
+            h1 { font-size: 1.8em; margin-top: 20px; }
             .container { padding: 15px 10px; margin: 0; border-radius: 15px; }
             td, th { padding: 8px 5px; font-size: 0.95em; }
-            
-            /* Sticker nhỏ lại và gọn hơn trên mobile */
             .custom-sticker { max-width: 80px; max-height: 80px; }
             .sticker-left { top: -15px; left: -5px; }
             .sticker-right { top: -20px; right: -5px; }
-            
             .input-group { flex-direction: column; align-items: center; width: 100%; }
             .cute-input { max-width: 100%; box-sizing: border-box; }
-            
-            /* Ẩn sticker text emoji nếu màn hình quá nhỏ */
             .stickers { font-size: 1.5em; letter-spacing: 10px; }
         }
     </style>
@@ -301,14 +324,19 @@
     
     <h1>Thời Khóa Biểu 🌸</h1>
     <div class="stickers">
+        <!-- Đã xóa dâu tây, thêm stickers mới -->
         <span>🍰</span>
-        <span>🍓</span>
-        <span>🎵</span>
-        <span>🧸</span>
+        <span>🌸</span>
+        <span>🍭</span>
+        <span>🎀</span>
+    </div>
+    
+    <div style="text-align: center;">
+        <span class="edit-hint">✏️ Nhấn vào ô trống để thêm/xóa môn học nha!</span>
     </div>
 
     <div class="table-wrapper">
-        <table>
+        <table id="scheduleTable">
             <thead>
                 <tr>
                     <th>Buổi</th>
@@ -332,7 +360,7 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td rowspan="3" class="subject">Tâm lí 🧠<span class="note">(Tiết 1-3)</span></td>
+                    <td rowspan="3" class="subject">Tâm lí 🧠<br><span class="note" contenteditable="false">(Tiết 1-3)</span></td>
                     <td></td>
                 </tr>
                 <tr>
@@ -375,8 +403,8 @@
                     <td>6</td>
                     <td></td>
                     <td></td>
-                    <td rowspan="3" class="subject">Triết học 📚<span class="note">(Tiết 6-8)</span></td>
-                    <td rowspan="3" class="subject">Anh văn 🇬🇧<span class="note">(Tiết 6-8)</span></td>
+                    <td rowspan="3" class="subject">Triết học 📚<br><span class="note" contenteditable="false">(Tiết 6-8)</span></td>
+                    <td rowspan="3" class="subject">Anh văn 🇬🇧<br><span class="note" contenteditable="false">(Tiết 6-8)</span></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -428,6 +456,39 @@
 </div>
 
 <script>
+    // 1. CẤU HÌNH CHỈNH SỬA Ô (EDITABLE)
+    document.addEventListener('DOMContentLoaded', () => {
+        const table = document.getElementById('scheduleTable');
+        const cells = table.querySelectorAll('tbody td');
+
+        cells.forEach(cell => {
+            // Bỏ qua ô "Buổi" và ô "Số tiết" (các ô có số hoặc chữ SÁNG/CHIỀU)
+            if (cell.classList.contains('session-title')) return;
+            if (!isNaN(cell.textContent.trim()) && cell.textContent.trim() !== '') return;
+
+            // Bật tính năng chỉnh sửa
+            cell.setAttribute('contenteditable', 'true');
+
+            // Xử lý sự kiện khi nhập liệu
+            cell.addEventListener('input', function() {
+                if (this.textContent.trim() !== '') {
+                    this.classList.add('subject');
+                } else {
+                    this.classList.remove('subject');
+                }
+            });
+            
+            // Xử lý sự kiện blur để dọn dẹp thẻ <br> rác nếu có
+            cell.addEventListener('blur', function() {
+                if (this.textContent.trim() === '') {
+                    this.innerHTML = ''; // Xóa sạch để hiện placeholder
+                    this.classList.remove('subject');
+                }
+            });
+        });
+    });
+
+    // 2. XỬ LÝ HÌNH ẢNH
     function updateImage(side, url) {
         const img = document.getElementById(side === 'left' ? 'img-left' : 'img-right');
         const defaultIcon = document.getElementById(side === 'left' ? 'default-face' : 'default-bow');
@@ -447,36 +508,36 @@
         }
     }
 
-    // --- XỬ LÝ HIỆU ỨNG TRÊN PC VÀ MOBILE ---
-
-    // 1. Di chuyển chuột (PC)
+    // 3. HIỆU ỨNG SPARKLE
     let throttleTimer;
     document.addEventListener('mousemove', function(e) {
         if(!throttleTimer) {
             throttleTimer = setTimeout(function() {
                 if(Math.random() > 0.5) createSparkle(e.pageX, e.pageY);
                 throttleTimer = null;
-            }, 50); // Giới hạn tần suất tạo hạt để không lag
+            }, 50);
         }
     });
 
-    // 2. Chạm cảm ứng (Mobile)
     document.addEventListener('touchmove', function(e) {
-        // Không preventDefault để vẫn cuộn trang được
         const touch = e.touches[0];
-        if(Math.random() > 0.7) { // Mobile cần ít hạt hơn chút để mượt
+        if(Math.random() > 0.7) {
             createSparkle(touch.pageX, touch.pageY);
         }
     }, {passive: true});
 
-    // 3. Click hoặc Tap (Burst effect)
     document.addEventListener('click', function(e) {
-        burstSparkles(e.pageX, e.pageY);
+        // Chỉ tạo hiệu ứng nổ nếu không click vào ô input (để tránh che khuất khi gõ)
+        if (e.target.tagName !== 'INPUT' && e.target.getAttribute('contenteditable') !== 'true') {
+            burstSparkles(e.pageX, e.pageY);
+        }
     });
     
     document.addEventListener('touchstart', function(e) {
         const touch = e.touches[0];
-        burstSparkles(touch.pageX, touch.pageY);
+        if (e.target.tagName !== 'INPUT' && e.target.getAttribute('contenteditable') !== 'true') {
+            burstSparkles(touch.pageX, touch.pageY);
+        }
     }, {passive: true});
 
     function burstSparkles(x, y) {
