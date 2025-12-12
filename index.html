@@ -45,6 +45,8 @@
             position: relative;
             backdrop-filter: blur(5px);
             animation: popIn 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            transition: all 0.5s ease;
+            margin-bottom: 60px; /* Chừa chỗ cho nút full screen */
         }
 
         @keyframes popIn {
@@ -152,7 +154,7 @@
             box-shadow: 0 0 10px var(--hk-pink);
         }
         
-        /* Khi ô trống (hiện placeholder bằng CSS trick nếu cần, hoặc để trống) */
+        /* Khi ô trống */
         td[contenteditable="true"]:empty::before {
             content: "Nhập...";
             color: #e0c0c8;
@@ -172,7 +174,6 @@
             box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
         }
 
-        /* Class .subject được dùng để in đậm và đổi màu các ô có nội dung */
         .subject {
             font-weight: bold;
             color: var(--hk-dark-pink);
@@ -185,7 +186,7 @@
             color: #888;
             margin-top: 4px;
             font-style: italic;
-            pointer-events: none; /* Tránh click nhầm vào note khi edit */
+            pointer-events: none;
         }
 
         /* Trang trí mặc định */
@@ -198,12 +199,12 @@
         #default-bow { top: -15px; right: -15px; font-size: 4em; transform: rotate(15deg); z-index: 10; }
         #default-face { top: 10px; left: 20px; font-size: 3em; transform: rotate(-10deg); z-index: 10; }
 
-        /* Trang trí tùy chỉnh (ảnh dán vào) */
+        /* Trang trí tùy chỉnh */
         .custom-sticker {
             position: absolute;
             z-index: 20;
-            max-width: 140px;
-            max-height: 140px;
+            max-width: 120px;
+            max-height: 120px;
             object-fit: contain;
             filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.15));
             transition: transform 0.3s;
@@ -214,16 +215,29 @@
             transform: scale(1.1) rotate(5deg);
         }
 
-        .sticker-left {
+        /* Vị trí 4 góc */
+        .sticker-top-left {
             top: -20px;
             left: -10px;
             animation: float 4s ease-in-out infinite;
         }
 
-        .sticker-right {
+        .sticker-top-right {
             top: -30px;
             right: -20px;
             animation: float 5s ease-in-out infinite reverse;
+        }
+
+        .sticker-bottom-left {
+            bottom: -20px;
+            left: -20px;
+            animation: float 4.5s ease-in-out infinite 1s;
+        }
+
+        .sticker-bottom-right {
+            bottom: -20px;
+            right: -20px;
+            animation: float 5.5s ease-in-out infinite 0.5s reverse;
         }
 
         @keyframes float {
@@ -232,7 +246,7 @@
             100% { transform: translateY(0px) rotate(-5deg); }
         }
 
-        /* Khu vực nhập link ảnh */
+        /* Khu vực điều khiển */
         .controls {
             margin-top: 30px;
             text-align: center;
@@ -253,10 +267,11 @@
         }
 
         .input-group {
-            display: flex;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
-            flex-wrap: wrap;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .cute-input {
@@ -264,12 +279,13 @@
             border-radius: 20px;
             padding: 10px 15px;
             width: 100%;
-            max-width: 300px;
             outline: none;
             color: var(--text-color);
             font-family: 'Itim', cursive;
             background: #fff0f5;
             transition: all 0.3s;
+            box-sizing: border-box;
+            font-size: 0.9em;
         }
 
         .cute-input:focus {
@@ -278,7 +294,37 @@
             box-shadow: 0 0 8px var(--hk-pink);
         }
 
-        /* Sparkle effect styles */
+        /* Nút Fullscreen */
+        #fullscreen-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--hk-dark-pink);
+            color: white;
+            border: 2px solid white;
+            padding: 12px 18px;
+            border-radius: 50px;
+            font-family: 'Itim', cursive;
+            font-size: 1.1em;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        #fullscreen-btn:hover {
+            transform: scale(1.1);
+            background: var(--hk-pink);
+        }
+
+        #fullscreen-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Sparkle effect */
         .sparkle {
             position: absolute;
             pointer-events: none;
@@ -299,32 +345,99 @@
             h1 { font-size: 1.8em; margin-top: 20px; }
             .container { padding: 15px 10px; margin: 0; border-radius: 15px; }
             td, th { padding: 8px 5px; font-size: 0.95em; }
-            .custom-sticker { max-width: 80px; max-height: 80px; }
-            .sticker-left { top: -15px; left: -5px; }
-            .sticker-right { top: -20px; right: -5px; }
-            .input-group { flex-direction: column; align-items: center; width: 100%; }
-            .cute-input { max-width: 100%; box-sizing: border-box; }
+            .custom-sticker { max-width: 70px; max-height: 70px; }
+            .sticker-top-left { top: -10px; left: -5px; }
+            .sticker-top-right { top: -10px; right: -5px; }
+            .sticker-bottom-left { bottom: -10px; left: -5px; }
+            .sticker-bottom-right { bottom: -10px; right: -5px; }
+            .input-group { grid-template-columns: 1fr; }
             .stickers { font-size: 1.5em; letter-spacing: 10px; }
+        }
+
+        /* --- CHẾ ĐỘ XOAY NGANG / FULLSCREEN --- */
+        @media screen and (orientation: landscape), :fullscreen {
+            body {
+                padding: 0;
+                align-items: flex-start;
+                background-attachment: fixed;
+            }
+
+            .container {
+                max-width: none;
+                width: 100%;
+                min-height: 100vh;
+                border-radius: 0;
+                border: none;
+                padding: 10px;
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 0;
+            }
+
+            /* Thu nhỏ tiêu đề và ẩn sticker để có chỗ cho bảng */
+            h1 { font-size: 1.5em; margin: 5px 0; }
+            .stickers { display: none; }
+            .controls { display: none; } 
+            .edit-hint { display: none; }
+
+            /* Sticker góc nhỏ lại và mờ đi */
+            .custom-sticker { 
+                transform: scale(0.6); 
+                opacity: 0.4; 
+                pointer-events: none; 
+            }
+            .sticker-top-left { top: -5px; left: -5px; }
+            .sticker-top-right { top: -5px; right: -5px; }
+            .sticker-bottom-left { bottom: -5px; left: -5px; }
+            .sticker-bottom-right { bottom: -5px; right: -5px; }
+
+            /* Bảng full màn hình */
+            .table-wrapper {
+                flex-grow: 1;
+                width: 100%;
+                overflow: auto;
+            }
+            
+            table {
+                width: 100%;
+                margin-bottom: 30px;
+            }
+
+            #fullscreen-btn {
+                opacity: 0.6;
+                transform: scale(0.8);
+                bottom: 10px;
+                right: 10px;
+            }
+            #fullscreen-btn:hover { opacity: 1; }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="main-container">
     <div id="default-bow" class="bow">🎀</div>
     <div id="default-face" class="kitty-face">🐱</div>
     
-    <img id="img-left" class="custom-sticker sticker-left" 
+    <!-- 4 GÓC HÌNH ẢNH -->
+    <img id="img-top-left" class="custom-sticker sticker-top-left" 
          src="https://sf-static.upanhlaylink.com/img/image_202512046c84562868689e59453a0cb4a1ee8b4d.jpg" 
-         alt="Hello Kitty">
+         alt="Góc Trên Trái">
          
-    <img id="img-right" class="custom-sticker sticker-right" 
+    <img id="img-top-right" class="custom-sticker sticker-top-right" 
          src="https://sf-static.upanhlaylink.com/img/image_20251204933dc9135c87a090a002478929debcd4.jpg" 
-         alt="Nơ Đỏ">
+         alt="Góc Trên Phải">
+
+    <img id="img-bottom-left" class="custom-sticker sticker-bottom-left" 
+         src="https://sf-static.upanhlaylink.com/img/image_20251212c8a7ca755b7c25b16f408fc36abdf025.jpg" 
+         alt="Góc Dưới Trái">
+
+    <img id="img-bottom-right" class="custom-sticker sticker-bottom-right" 
+         src="https://sf-static.upanhlaylink.com/img/image_20251212eb8434ad94a2e2639558073d94b294ca.jpg" 
+         alt="Góc Dưới Phải">
     
     <h1>Thời Khóa Biểu 🌸</h1>
     <div class="stickers">
-        <!-- Đã xóa dâu tây, thêm stickers mới -->
         <span>🍰</span>
         <span>🌸</span>
         <span>🍭</span>
@@ -440,36 +553,89 @@
     </div>
 
     <div class="controls">
-        <p style="margin: 0 0 15px 0; color: var(--hk-dark-pink); font-size: 1.1em;">✨ Thay đổi link hình ở đây nếu bạn thích ✨</p>
+        <p style="margin: 0 0 15px 0; color: var(--hk-dark-pink); font-size: 1.1em;">✨ Trang trí 4 góc bằng link hình ✨</p>
         <div class="input-group">
             <input type="text" class="cute-input" 
                    value="https://upload.wikimedia.org/wikipedia/en/0/05/Hello_kitty_character_portrait.png" 
-                   placeholder="🔗 Link hình góc trái (Hello Kitty)" 
-                   oninput="updateImage('left', this.value)">
+                   placeholder="🔗 Góc Trên Trái (Mèo)" 
+                   oninput="updateImage('top-left', this.value)">
                    
             <input type="text" class="cute-input" 
                    value="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Red_bow_tie.svg/640px-Red_bow_tie.svg.png" 
-                   placeholder="🔗 Link hình góc phải (Cái Nơ)" 
-                   oninput="updateImage('right', this.value)">
+                   placeholder="🔗 Góc Trên Phải (Nơ)" 
+                   oninput="updateImage('top-right', this.value)">
+
+            <input type="text" class="cute-input" 
+                   value="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Nuvola_apps_kcookie.png/120px-Nuvola_apps_kcookie.png" 
+                   placeholder="🔗 Góc Dưới Trái (Bánh)" 
+                   oninput="updateImage('bottom-left', this.value)">
+
+            <input type="text" class="cute-input" 
+                   value="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Lollipop_Flat_Icon_Vector.svg/1024px-Lollipop_Flat_Icon_Vector.svg.png" 
+                   placeholder="🔗 Góc Dưới Phải (Kẹo)" 
+                   oninput="updateImage('bottom-right', this.value)">
         </div>
     </div>
 </div>
 
+<!-- Nút Fullscreen -->
+<button id="fullscreen-btn" onclick="toggleFullScreen()">
+    ⛶ Mở rộng / Xoay ngang
+</button>
+
 <script>
+    // --- CHỨC NĂNG FULLSCREEN VÀ XOAY NGANG ---
+    function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+            // Bước 1: Yêu cầu Fullscreen
+            document.documentElement.requestFullscreen().then(() => {
+                // Bước 2: Thử khóa xoay ngang (chỉ hoạt động trên Mobile Android)
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock('landscape').catch(function(error) {
+                        // Lỗi này thường xảy ra trên PC vì PC không hỗ trợ xoay bằng phần mềm
+                        // Chúng ta bỏ qua lỗi này để không ảnh hưởng trải nghiệm PC
+                        console.log("Xoay ngang không khả dụng trên thiết bị này (có thể là PC): " + error);
+                    });
+                }
+            }).catch(err => {
+                alert(`Lỗi khi mở toàn màn hình: ${err.message}`);
+            });
+            document.getElementById('fullscreen-btn').innerHTML = "✖ Thu nhỏ";
+        } else {
+            // Thoát Fullscreen
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+                // Mở khóa xoay
+                if (screen.orientation && screen.orientation.unlock) {
+                    screen.orientation.unlock();
+                }
+            }
+            document.getElementById('fullscreen-btn').innerHTML = "⛶ Mở rộng / Xoay ngang";
+        }
+    }
+
+    // Lắng nghe sự kiện thay đổi fullscreen để cập nhật nút
+    document.addEventListener('fullscreenchange', () => {
+        const btn = document.getElementById('fullscreen-btn');
+        if (document.fullscreenElement) {
+            btn.innerHTML = "✖ Thu nhỏ";
+        } else {
+            btn.innerHTML = "⛶ Mở rộng / Xoay ngang";
+        }
+    });
+
+
     // 1. CẤU HÌNH CHỈNH SỬA Ô (EDITABLE)
     document.addEventListener('DOMContentLoaded', () => {
         const table = document.getElementById('scheduleTable');
         const cells = table.querySelectorAll('tbody td');
 
         cells.forEach(cell => {
-            // Bỏ qua ô "Buổi" và ô "Số tiết" (các ô có số hoặc chữ SÁNG/CHIỀU)
             if (cell.classList.contains('session-title')) return;
             if (!isNaN(cell.textContent.trim()) && cell.textContent.trim() !== '') return;
 
-            // Bật tính năng chỉnh sửa
             cell.setAttribute('contenteditable', 'true');
 
-            // Xử lý sự kiện khi nhập liệu
             cell.addEventListener('input', function() {
                 if (this.textContent.trim() !== '') {
                     this.classList.add('subject');
@@ -478,33 +644,32 @@
                 }
             });
             
-            // Xử lý sự kiện blur để dọn dẹp thẻ <br> rác nếu có
             cell.addEventListener('blur', function() {
                 if (this.textContent.trim() === '') {
-                    this.innerHTML = ''; // Xóa sạch để hiện placeholder
+                    this.innerHTML = ''; 
                     this.classList.remove('subject');
                 }
             });
         });
     });
 
-    // 2. XỬ LÝ HÌNH ẢNH
-    function updateImage(side, url) {
-        const img = document.getElementById(side === 'left' ? 'img-left' : 'img-right');
-        const defaultIcon = document.getElementById(side === 'left' ? 'default-face' : 'default-bow');
+    // 2. XỬ LÝ HÌNH ẢNH (Hỗ trợ 4 góc)
+    function updateImage(position, url) {
+        // position: 'top-left', 'top-right', 'bottom-left', 'bottom-right'
+        const img = document.getElementById(`img-${position}`);
+        
+        // Logic ẩn hiện hình mặc định (chỉ áp dụng cho top-left và top-right nếu muốn giữ logic cũ)
+        // Nhưng ở bản này ta dùng sticker custom hoàn toàn nên chỉ cần ẩn hiện img
         
         if (url && url.trim() !== "") {
             img.src = url;
             img.style.display = 'block';
-            if(defaultIcon) defaultIcon.style.opacity = '0';
             
             img.onerror = function() {
                 img.style.display = 'none';
-                if(defaultIcon) defaultIcon.style.opacity = '1';
             }
         } else {
             img.style.display = 'none';
-            if(defaultIcon) defaultIcon.style.opacity = '1';
         }
     }
 
@@ -527,15 +692,14 @@
     }, {passive: true});
 
     document.addEventListener('click', function(e) {
-        // Chỉ tạo hiệu ứng nổ nếu không click vào ô input (để tránh che khuất khi gõ)
-        if (e.target.tagName !== 'INPUT' && e.target.getAttribute('contenteditable') !== 'true') {
+        if (e.target.tagName !== 'INPUT' && e.target.getAttribute('contenteditable') !== 'true' && e.target.id !== 'fullscreen-btn') {
             burstSparkles(e.pageX, e.pageY);
         }
     });
     
     document.addEventListener('touchstart', function(e) {
         const touch = e.touches[0];
-        if (e.target.tagName !== 'INPUT' && e.target.getAttribute('contenteditable') !== 'true') {
+        if (e.target.tagName !== 'INPUT' && e.target.getAttribute('contenteditable') !== 'true' && e.target.id !== 'fullscreen-btn') {
             burstSparkles(touch.pageX, touch.pageY);
         }
     }, {passive: true});
