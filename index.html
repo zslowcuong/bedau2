@@ -188,7 +188,6 @@
         .custom-sticker {
             position: absolute;
             z-index: 20;
-            /* Tăng kích thước sticker */
             max-width: 160px; 
             max-height: 160px;
             object-fit: contain;
@@ -399,9 +398,8 @@
             /* Hiện toolbar edit trong chế độ xoay ngang để tiện sửa */
             .edit-toolbar { display: flex; order: -1; margin-bottom: 5px; }
 
+            /* Giữ nguyên độ rõ nét của hình ảnh, không làm mờ */
             .custom-sticker { 
-                transform: scale(0.6); 
-                opacity: 0.4; 
                 pointer-events: none; 
             }
             .sticker-top-left { top: -10px; left: -10px; }
@@ -537,7 +535,7 @@
     const defaultImages = {
         'top-left': 'https://sf-static.upanhlaylink.com/img/image_20251212eb8434ad94a2e2639558073d94b294ca.jpg',
         'top-right': 'https://sf-static.upanhlaylink.com/img/image_20251212c8a7ca755b7c25b16f408fc36abdf025.jpg',
-        'bottom-left': 'https://sf-static.upanhlaylink.com/img/image_202512041289ee9e49771d6a842424269d252637.jpg',
+        'bottom-left': 'https://sf-static.upanhlaylink.com/img/image_202512046c84562868689e59453a0cb4a1ee8b4d.jpg',
         'bottom-right': 'https://sf-static.upanhlaylink.com/img/image_20251204933dc9135c87a090a002478929debcd4.jpg'
     };
 
@@ -558,14 +556,59 @@
         const savedTable = localStorage.getItem(STORAGE_KEY_TABLE);
         if (savedTable) {
             document.getElementById('tableBody').innerHTML = savedTable;
+            // TỰ ĐỘNG SỬA LỖI CẤU TRÚC BẢNG NẾU CÓ
+            fixTableStructure();
         } else {
-            // Nếu chưa có save, điền dữ liệu mẫu (như bản cũ) vào cấu trúc trống
-            // (Phần này chỉ chạy lần đầu tiên)
-            const rows = document.getElementById('tableBody').rows;
-            // Ví dụ điền mẫu:
-            // Sáng T2: rows[0].cells[2].textContent = "Toán"; (Cell index 2 vì 0 là Buổi, 1 là Tiết)
-            // Vì logic index phức tạp khi merge, ta để trống cho user nhập.
+            // Nếu chưa có save, dùng mặc định
         }
+    }
+
+    // HÀM TỰ ĐỘNG SỬA LỖI TIẾT 4, 5 NHẢY CỘT
+    function fixTableStructure() {
+        const rows = document.getElementById('tableBody').rows;
+        let fixed = false;
+        for (let i = 0; i < rows.length; i++) {
+            const cells = rows[i].cells;
+            if (cells.length > 0) {
+                const firstCell = cells[0];
+                const isSessionTitle = firstCell.classList.contains('session-title');
+                
+                // Trường hợp 1: Hàng không có tiêu đề buổi (VD: Tiết 2, 3, 4, 5)
+                // Ô đầu tiên phải là ô Tiết (không có data-col). Nếu có data-col -> Lỗi
+                if (!isSessionTitle && firstCell.hasAttribute('data-col')) {
+                    // Tìm ô Tiết (ô không có data-col) đang bị đẩy ra sau
+                    let periodCellIndex = -1;
+                    for (let j = 0; j < cells.length; j++) {
+                        if (!cells[j].hasAttribute('data-col') && !cells[j].classList.contains('session-title')) {
+                            periodCellIndex = j;
+                            break;
+                        }
+                    }
+                    if (periodCellIndex > 0) {
+                        rows[i].insertBefore(cells[periodCellIndex], firstCell);
+                        fixed = true;
+                    }
+                } 
+                // Trường hợp 2: Hàng có tiêu đề buổi (VD: Sáng/Chiều - Tiết 1, 6)
+                else if (isSessionTitle && cells.length > 1) {
+                    const secondCell = cells[1];
+                    if (secondCell.hasAttribute('data-col')) {
+                        let periodCellIndex = -1;
+                        for (let j = 1; j < cells.length; j++) {
+                            if (!cells[j].hasAttribute('data-col')) {
+                                periodCellIndex = j;
+                                break;
+                            }
+                        }
+                        if (periodCellIndex > 1) {
+                            rows[i].insertBefore(cells[periodCellIndex], secondCell);
+                            fixed = true;
+                        }
+                    }
+                }
+            }
+        }
+        if (fixed) saveData(); // Lưu lại bản đã sửa
     }
 
     function saveData() {
@@ -660,9 +703,14 @@
                     newCell.setAttribute('data-col', colId);
                     
                     // Tìm vị trí chèn: Duyệt row xem ô nào có data-col > colId thì chèn trước
+                    // [FIX LỖI] Nếu ô không có data-col (ô Tiết), coi như col 0. Nếu có, lấy giá trị.
+                    // Logic cũ || 99 gây lỗi vì 99 > 2 nên chèn trước ô Tiết.
                     let inserted = false;
                     for(let c=0; c<row.cells.length; c++) {
-                        const nextCellCol = parseInt(row.cells[c].getAttribute('data-col') || 99);
+                        const cellColAttr = row.cells[c].getAttribute('data-col');
+                        // Nếu không có attr data-col, coi như là 0 (cột Tiết)
+                        const nextCellCol = cellColAttr ? parseInt(cellColAttr) : 0; 
+                        
                         if(nextCellCol > parseInt(colId)) {
                             row.insertBefore(newCell, row.cells[c]);
                             inserted = true;
